@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>好賣+ 雙版本整併｜金物流方案互動 Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#0078C8; --primary-d:#005a96; --green:#36AD1B; --gray:#818285;
+  --bg:#F6F6F6; --blue:#2391DA; --blue-l:#D9F4FF; --notice:#FFF6D9; --notice-t:#FF9F16;
+  --red:#F44336; --orange:#EF6500; --line:#E0E0E0; --card:#fff; --text:#2b2b2b; --muted:#6b6b6b;
+  --ok:#2E7D32; --warn:#C62828;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+a{color:var(--primary)}
+.wrap{max-width:1360px;margin:0 auto;padding:0 16px 64px}
+
+/* ---------- header ---------- */
+header{background:#fff;border-bottom:3px solid var(--primary);padding:18px 0 0}
+.hd{max-width:1360px;margin:0 auto;padding:0 16px}
+.hd h1{font-size:22px;margin:0 0 4px;font-weight:700}
+.hd p{margin:0 0 14px;color:var(--muted);font-size:13px}
+.plans{display:flex;gap:6px;flex-wrap:wrap}
+.plan-tab{border:1px solid var(--line);border-bottom:none;background:#fafafa;border-radius:10px 10px 0 0;
+  padding:9px 14px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--muted);white-space:nowrap}
+.plan-tab .n{display:block;font-size:11px;color:#9a9a9a;font-weight:400}
+.plan-tab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.plan-tab.on .n{color:#cfe9fa}
+.plan-tab.rec{border-color:var(--green)}
+.plan-tab.rec::after{content:"建議";background:var(--green);color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;margin-left:6px;vertical-align:1px}
+.plan-tab.on.rec::after{background:#fff;color:var(--green)}
+
+/* ---------- summary bar ---------- */
+.sumbar{background:#fff;border:1px solid var(--line);border-radius:0 10px 10px 10px;padding:16px 18px;margin-bottom:18px}
+.sumbar h2{margin:0 0 6px;font-size:17px;color:var(--primary)}
+.sumbar .desc{font-size:13.5px;color:var(--muted);margin:0 0 12px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:var(--bg);border-radius:8px;padding:8px 14px;min-width:150px;border-left:4px solid var(--primary)}
+.stat .k{font-size:11.5px;color:var(--muted);display:block}
+.stat .v{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.stat .s{font-size:11px;color:#9a9a9a}
+.stat.danger{border-left-color:var(--red)} .stat.danger .v{color:var(--warn)}
+.stat.good{border-left-color:var(--green)} .stat.good .v{color:var(--ok)}
+
+/* ---------- layout ---------- */
+.cols{display:grid;grid-template-columns:186px 1fr 320px;gap:16px;align-items:start}
+@media(max-width:1180px){.cols{grid-template-columns:166px 1fr}.side{grid-column:1/-1}}
+@media(max-width:760px){.cols{grid-template-columns:1fr}.nav{display:flex;gap:6px;overflow-x:auto}}
+
+.nav{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;position:sticky;top:12px}
+.nav b{display:block;font-size:11px;color:#9a9a9a;padding:4px 8px 6px;letter-spacing:.5px}
+.nav button{display:block;width:100%;text-align:left;border:none;background:none;padding:9px 10px;border-radius:8px;
+  cursor:pointer;font:inherit;font-size:13.5px;color:var(--text);white-space:nowrap}
+.nav button:hover{background:var(--bg)}
+.nav button.on{background:var(--blue-l);color:var(--primary-d);font-weight:700}
+.nav button small{display:block;font-size:10.5px;color:#9a9a9a;font-weight:400}
+.nav button.on small{color:var(--blue)}
+
+/* ---------- screen (mock UI) ---------- */
+.screen{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.crumb{background:#fafafa;border-bottom:1px solid var(--line);padding:10px 18px;font-size:12px;color:var(--muted)}
+.crumb b{color:var(--text)}
+.scr-body{padding:20px 22px 26px}
+.scr-title{font-size:19px;font-weight:700;margin:0 0 4px}
+.scr-sub{font-size:12.5px;color:var(--muted);margin:0 0 18px}
+
+.sect{border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
+.sect>h4{margin:0;padding:12px 16px;background:#fafafa;border-bottom:1px solid var(--line);font-size:15px;
+  border-radius:10px 10px 0 0;display:flex;align-items:center;gap:8px}
+.sect>.in{padding:16px}
+.tagp{font-size:10.5px;padding:2px 8px;border-radius:10px;font-weight:500}
+.t-lock{background:#ECEFF1;color:#546E7A} .t-new{background:#E8F5E9;color:var(--ok)}
+.t-keep{background:var(--blue-l);color:var(--primary-d)} .t-del{background:#FFEBEE;color:var(--warn)}
+
+.notice{background:var(--notice);color:#8a5a00;border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:14px}
+.notice b{color:var(--notice-t)}
+.hint{font-size:12px;color:var(--muted);margin:6px 0 0}
+.hint.strike{text-decoration:line-through;color:#bdbdbd}
+
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.row label.lb{min-width:86px;font-size:13.5px;color:#444}
+input[type=number],input[type=text]{border:1px solid #cfcfcf;border-radius:6px;padding:7px 10px;font:inherit;font-size:14px;width:96px;background:#fff}
+input:disabled{background:#f2f2f2;color:#9e9e9e;cursor:not-allowed}
+.unit{font-size:13px;color:var(--muted)}
+.pill{display:inline-block;background:var(--blue-l);color:var(--primary-d);border-radius:14px;padding:3px 12px;font-size:12.5px;font-weight:500}
+.pill.fixed{background:#ECEFF1;color:#546E7A}
+.pill.free{background:#E8F5E9;color:var(--ok)}
+
+.sw{display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none}
+.sw input{display:none}
+.sw .tr{width:42px;height:23px;border-radius:12px;background:#ccc;position:relative;transition:.18s;flex:none}
+.sw .tr::after{content:"";position:absolute;width:19px;height:19px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked + .tr{background:var(--green)}
+.sw input:checked + .tr::after{left:21px}
+.sw input:disabled + .tr{opacity:.45;cursor:not-allowed}
+.sw span.lbl{font-size:13.5px}
+
+.cb{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:13.5px}
+.cb input{width:16px;height:16px;accent-color:var(--primary)}
+
+table.g{width:100%;border-collapse:collapse;font-size:12.5px}
+table.g th,table.g td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+table.g th{background:#fafafa;font-weight:500;color:#555}
+table.g td.l{text-align:left}
+table.g tr.hl td{background:#FFF9E6;font-weight:700}
+
+.disabled-zone{position:relative}
+.disabled-zone.off{opacity:.42;pointer-events:none}
+.ribbon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none}
+.ribbon span{background:rgba(69,90,100,.93);color:#fff;font-size:13px;padding:7px 18px;border-radius:20px;font-weight:500}
+
+.btnbar{display:flex;gap:10px;justify-content:flex-end;padding-top:6px}
+.btn{border:none;border-radius:10px;padding:9px 22px;font:inherit;font-size:14px;cursor:pointer}
+.btn.p{background:var(--primary);color:#fff} .btn.g{background:#eee;color:#555}
+
+/* cart */
+.cart-line{display:flex;justify-content:space-between;padding:7px 0;font-size:14px;border-bottom:1px dashed var(--line)}
+.cart-line.tot{border-bottom:none;border-top:2px solid var(--text);margin-top:6px;padding-top:10px;font-size:17px;font-weight:700}
+.cart-line .mo{color:var(--red);font-weight:700}
+.opt{border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:9px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.opt.sel{border-color:var(--primary);background:var(--blue-l)}
+.opt .nm{font-weight:500}
+.opt .sb{font-size:11.5px;color:var(--muted)}
+.opt .pr{font-weight:700;color:var(--red)}
+
+/* side */
+.side{display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card h3{margin:0 0 10px;font-size:14px;color:var(--primary);border-bottom:1px solid var(--line);padding-bottom:7px}
+.card ul{margin:0;padding-left:18px;font-size:12.5px;color:#444}
+.card li{margin-bottom:6px}
+.kv{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0;border-bottom:1px dotted var(--line)}
+.kv:last-child{border:none}
+.kv b{font-weight:700}
+.verdict{border-radius:8px;padding:10px 12px;font-size:12.5px;line-height:1.55}
+.verdict.go{background:#E8F5E9;border-left:4px solid var(--green)}
+.verdict.hold{background:var(--notice);border-left:4px solid var(--notice-t)}
+.verdict.no{background:#FFEBEE;border-left:4px solid var(--red)}
+.verdict b{display:block;margin-bottom:3px}
+.legend{font-size:11.5px;color:var(--muted);margin-top:10px}
+.legend span{display:inline-block;margin-right:10px}
+footer{text-align:center;color:#9a9a9a;font-size:11.5px;padding:28px 0 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <h1>好賣+ 雙版本整併｜金物流設定方案 互動 Prototype</h1>
+    <p>2026/11/19　依 11/19 會議結論與營運方案決策分析（2026/08–10，32,441 位賣家 / 1,474,549 件去重寄件）製作　·　切換上方方案，再從左側切換畫面</p>
+    <div class="plans" id="plans"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="sumbar">
+    <h2 id="p-name"></h2>
+    <p class="desc" id="p-desc"></p>
+    <div class="stats" id="p-stats"></div>
+  </div>
+
+  <div class="cols">
+    <div class="nav" id="nav">
+      <b>畫面</b>
+      <button data-s="logi" class="on">① 金物流設定<small>賣家專區 ＞ 金物流設定</small></button>
+      <button data-s="mall">② 賣場設定<small>賣場與商品管理 ＞ 賣場管理</small></button>
+      <button data-s="item">③ 商品設定<small>商品管理 ＞ 編輯商品</small></button>
+      <button data-s="cart">④ 買家購物車<small>好賣市集 ＞ 結帳</small></button>
+    </div>
+
+    <div class="screen" id="screen"></div>
+
+    <div class="side" id="side"></div>
+  </div>
+
+  <footer>本 Prototype 僅用於方案溝通，非最終 UI 設計稿。宅配材積價目與店到店／宅配限制取自現行超級版實際畫面。</footer>
+</div>
+
+<script>
+/* ===================== 共用資料 ===================== */
+// 宅配材積價目表（取自現行「金物流設定＞物流設定」實際畫面）
+const DELIV = {
+  s60 :{label:'s60 (三邊合 ≤60cm)',  本島:80,  本島偏遠:130, 離島:205},
+  s90 :{label:'s90 (三邊合 ≤90cm)',  本島:80,  本島偏遠:170, 離島:255},
+  s120:{label:'s120 (三邊合 ≤120cm)',本島:105, 本島偏遠:210, 離島:305},
+  s150:{label:'s150 (三邊合 ≤150cm)',本島:155, 本島偏遠:255, 離島:355}
+};
+const PLATFORM = {常溫:35, 冷凍:99};      // 當期平台運費活動
+const ORIGINAL = {常溫:60, 冷凍:120};     // 平台原價（參考）
+
+/* ===================== 方案定義 ===================== */
+/* 旗標說明
+   logiFee   : 金物流層「運費金額」是否可由賣家編輯  (edit | lock)
+   logiDeliv : 宅配在金物流層的呈現  (table=12格材積價目 | flat=單一固定價 | none)
+   mallFee   : 賣場層運費設定        (edit | threshold=只能設滿額門檻 | none)
+   itemFee   : 商品層運費金額        (edit | lock | none)
+   itemVol   : 商品層材積            (edit | none)
+   absorb    : 「我會負擔運費」      (true | false)
+   itemUrl   : 商品型網址(單品連結)  (keep | rename | drop)
+   quickForm : 便利自填單            (true|false)
+   cartRule  : 購物車多商品運費規則
+*/
+const PLANS = [
+{
+  id:'p1', tab:'方案一', tabn:'全面集中金物流', rec:false,
+  name:'方案一｜全面集中於金物流設定',
+  desc:'賣場與商品都不能設定任何運費，全部回到金物流設定。宅配比照賣貨便改為單一固定運費，不再依材積分級。學習成本最低，但與好賣+ 既有的宅配材積計價規則直接衝突。',
+  flags:{logiFee:'edit', logiDeliv:'flat', mallFee:'none', itemFee:'none', itemVol:'none',
+         absorb:true, itemUrl:'drop', quickForm:false,
+         cartRule:'全賣場單一運費，購物車直接取金物流設定值'},
+  stats:[
+    {k:'受影響賣家',v:'23,357',s:'全平台 72.00%',c:'danger'},
+    {k:'受影響寄件',v:'731,007',s:'全平台 49.57%',c:'danger'},
+    {k:'Top50 集中度',v:'17.95%',s:'影響面廣、非少數大戶'},
+    {k:'宅配成本缺口',v:'最高 355→?',s:'離島 s150 無法用單一價吸收',c:'danger'}
+  ],
+  specs:[
+    '金物流設定成為唯一費率來源，常溫／冷凍／社區取各自獨立一條，賣家只能開關。',
+    '宅配改為單一固定運費（不分材積、不分本島離島）。',
+    '賣場管理頁完全移除運費區塊。',
+    '商品編輯頁移除「商品運費設定」與「材積／重量」整區。',
+    '商品型網址取消，既有網址需轉為一般賣場。'
+  ],
+  pros:['賣家只需在一個地方設定，學習成本最低','購物車運費判斷最單純，客服可一句話說明','與「平台統一控價」方向完全一致'],
+  cons:['宅配材積是好賣+ 既有物理規則，拔掉後離島 s150（355 元）與本島 s60（80 元）同價，平台或賣家必須吸收價差',
+        '材積同時決定「能不能走店到店」（三邊合 ≤105cm），拔掉後無法擋超材，將大量自動拆單或退件',
+        '取消商品型網址＝18,699 位賣家、226,411 個網址需搬移，且一般賣場上限 200 放不下 362 位賣家'],
+  verdict:{t:'no',h:'不建議直接採用',b:'影響 72% 賣家、49.6% 寄件，且與宅配材積計價、店到店超材判斷兩項既有規則衝突。方向正確，但「宅配固定運費」與「取消商品型網址」兩項必須拆開處理。'}
+},
+{
+  id:'p2', tab:'方案二', tabn:'維持現況＋宅配材積', rec:false,
+  name:'方案二｜維持現有架構，僅保留宅配材積（超級版現況）',
+  desc:'整併時把好賣版的賣場層運費設定拔除，統一比照超級版：運費在金物流設定，商品層保留材積與「套用賣家資訊運費」開關。變動最小，但商品層仍可自訂運費，購物車判斷問題沒有解決。',
+  flags:{logiFee:'edit', logiDeliv:'table', mallFee:'none', itemFee:'edit', itemVol:'edit',
+         absorb:true, itemUrl:'drop', quickForm:false,
+         cartRule:'同賣場多商品時，仍需在多組商品運費中擇一，規則複雜'},
+  stats:[
+    {k:'受影響賣家',v:'18,776',s:'好賣版 80.60%',c:'danger'},
+    {k:'受影響寄件',v:'531,077',s:'好賣版 73.28%',c:'danger'},
+    {k:'其中運費面',v:'283 人 / 7,093 件',s:'好賣版僅 0.98%',c:'good'},
+    {k:'其中網址面',v:'18,699 人 / 529,565 件',s:'好賣版 73.07%',c:'danger'}
+  ],
+  specs:[
+    '金物流設定：店到店自訂運費（常溫／冷凍）＋免運門檻；宅配維持 12 格材積價目表。',
+    '賣場管理頁移除運費區塊（好賣版原有的賣場運費消失）。',
+    '商品編輯頁保留「材積／重量」與「商品運費設定」，並保留「套用賣家資訊運費」開關。',
+    '商品型網址取消。'
+  ],
+  pros:['對超級版賣家零影響，只需搬好賣版','開發變動最小（封前端＋批次寫值＋連動）','材積與超材判斷完整保留'],
+  cons:['商品層仍可關閉「套用賣家資訊運費」自訂金額，購物車多商品擇一的問題原封不動',
+        '真正造成 73% 影響的是「取消商品型網址」，與運費無關卻被綁在同一個方案裡',
+        '整併後賣家仍要在兩個地方理解運費（金物流＋商品），學習成本沒有下降'],
+  verdict:{t:'hold',h:'可行但沒有解決核心問題',b:'數字上 80.6% 的影響幾乎全部來自「取消商品型網址」，而非運費。建議把這兩件事拆成兩個決策分別評估。'}
+},
+{
+  id:'p3', tab:'方案三', tabn:'方案二＋便利自填單', rec:false,
+  name:'方案三｜方案二 ＋ 便利自填單',
+  desc:'在方案二基礎上新增「便利自填單」：賣家只需開一個賣場名稱與運費，由買家自行填寫商品名稱、單價與數量。用來承接原本把商品型網址當快速收單在用的賣家。',
+  flags:{logiFee:'edit', logiDeliv:'table', mallFee:'none', itemFee:'edit', itemVol:'edit',
+         absorb:true, itemUrl:'drop', quickForm:true,
+         cartRule:'同賣場多商品擇一；便利自填單一律吃金物流設定'},
+  stats:[
+    {k:'受影響賣家',v:'18,720',s:'好賣版 80.36%',c:'danger'},
+    {k:'受影響寄件',v:'530,483',s:'好賣版 73.19%',c:'danger'},
+    {k:'可被自填單承接',v:'9,612 人',s:'只用 1 個商品型網址者',c:'good'},
+    {k:'仍需搬移',v:'9,087 人',s:'使用 2 個以上網址者'}
+  ],
+  specs:[
+    '同方案二。',
+    '新增「便利自填單」賣場類型：只需填賣場名稱與運費，無商品設定層。',
+    '便利自填單直接吃金物流設定，不可自訂運費。',
+    '買家自行填寫商品名稱／單價／數量，賣家可修改後出單。'
+  ],
+  pros:['承接「只想快速收單」的賣家，9,612 位只用單一商品型網址者可無痛轉移',
+        '新賣家 onboarding 成本極低，只要填名字跟金額',
+        '與競品賣貨便的便利自填單對齊，招商時可直接對標'],
+  cons:['便利自填單無法承接「有多個商品要長期上架」的 9,087 位賣家',
+        '買家自行填寫金額有爭議風險（填錯、惡意低填），需要賣家確認機制',
+        '賣貨便官方目前不提供跨訂單合併，好賣+ 若要做併單是額外開發'],
+  verdict:{t:'hold',h:'值得做，但不是運費架構的解答',b:'便利自填單是好的新功能與招商工具，解決的是「快速收單」而非「運費收斂」。建議與運費架構分開評估、分開排程。'}
+},
+{
+  id:'p4', tab:'方案四', tabn:'費率中心化＋賣場折抵', rec:true,
+  name:'方案四｜費率中心化 ＋ 賣場滿額折抵（建議案）',
+  desc:'金物流＝唯一費率來源且金額唯讀（平台價）；商品＝材積與物流開關；賣場＝行銷層，只能設「滿額折抵／免運門檻」，上限即平台運費。商品型網址不取消，只正名為「單品連結」並收回其運費設定權。把 11/19 會議收斂的方向完整落地。',
+  flags:{logiFee:'lock', logiDeliv:'table', mallFee:'threshold', itemFee:'lock', itemVol:'edit',
+         absorb:true, itemUrl:'rename', quickForm:true,
+         cartRule:'同賣場同物流取「對買家最有利」者（比照蝦皮：任一件設我會負擔運費，整單由賣家負擔）'},
+  stats:[
+    {k:'受影響賣家',v:'485',s:'全平台 1.49%',c:'good'},
+    {k:'受影響寄件',v:'30,529',s:'全平台 2.07%',c:'good'},
+    {k:'須個別溝通(P1)',v:'55 人',s:'受影響寄件 ≥200 件'},
+    {k:'商品型網址',v:'0 人需搬移',s:'不取消，只收回運費設定權',c:'good'}
+  ],
+  specs:[
+    '金物流設定：常溫店到店、冷凍店到店、社區取、宅配各自獨立一列，賣家只能開／關。運費金額顯示平台價且唯讀。',
+    '宅配維持 12 格材積價目表（平台公告價，唯讀）。',
+    '商品編輯頁：保留「材積／重量」（決定宅配級距與店到店超材判斷）、物流開關、「我會負擔運費」。移除運費金額欄位。',
+    '賣場管理頁新增「運費折抵設定」：滿額門檻最多 3 級，每級可設折抵金額，折抵上限＝平台運費（即免運）。',
+    '商品型網址正名為「單品連結」，保留分享與下單能力，不再有獨立運費設定，一律吃金物流＋所屬賣場折抵。',
+    '便利自填單同步提供，作為新賣家的最低設定入口。'
+  ],
+  pros:['影響面從 72%／80% 降到 1.49%，且集中在可一對一輔導的 485 人',
+        '運費只有一個來源，購物車判斷邏輯單純，開發端的核心疑慮被解除',
+        '不動商品型網址＝不動 226,411 個既有連結，沒有 SEO、站外導流與賣場上限 200 的問題',
+        '賣家仍能做差別化（滿額折抵），營運招商訴求不受損',
+        '材積與超材判斷完整保留，宅配離島成本不需平台吸收'],
+  cons:['賣家不再能「向買家多收運費賺差額」，需向營運說明取捨',
+        '需新增「賣場層折抵」功能（小型開發），非純粹移除',
+        '商品型網址正名需同步調整前台用語、說明與教學手冊'],
+  verdict:{t:'go',h:'建議採用',b:'把「運費收斂」與「商品型網址」兩個議題拆開：運費面只影響 1.49% 賣家、2.07% 寄件，可立即執行；商品型網址改以正名與功能收權處理，零搬移。既達成 11/19 會議的收斂方向，又避開最大的量體風險。'}
+},
+{
+  id:'p5', tab:'方案五', tabn:'分階段＋白名單過渡', rec:false,
+  name:'方案五｜分階段導入 ＋ 白名單過渡（方案四的落地路徑）',
+  desc:'終點與方案四相同，但分三階段推進，並對現有 485 位自訂運費賣家給予 6 個月白名單。適合在營運擔心既有賣家反彈、或希望與社區取／瘦身排程錯開時採用。',
+  flags:{logiFee:'lock', logiDeliv:'table', mallFee:'threshold', itemFee:'lock', itemVol:'edit',
+         absorb:true, itemUrl:'rename', quickForm:true, whitelist:true,
+         cartRule:'同方案四；白名單賣家維持舊規則，購物車以賣家設定值優先'},
+  stats:[
+    {k:'階段一影響',v:'0 人',s:'僅新賣家適用新規則',c:'good'},
+    {k:'階段二影響',v:'485 人',s:'白名單退場，全平台 1.49%'},
+    {k:'階段三影響',v:'0 人搬移',s:'單品連結正名＋合併工具',c:'good'},
+    {k:'總時程',v:'約 7 個月',s:'較方案四多 3～4 個月'}
+  ],
+  specs:[
+    '階段一（上線日起）：新賣家一律適用新架構；既有 485 位自訂運費賣家進入白名單，畫面出現「過渡期」標記與到期日。',
+    '階段二（上線＋6 個月）：白名單到期，全面改吃平台運費；賣場折抵功能同步開放作為替代工具。',
+    '階段三（階段二＋1 個月）：商品型網址正名為單品連結，提供「批次合併至賣場」工具。',
+    '其餘規格同方案四。'
+  ],
+  pros:['既有賣家有完整緩衝期，客訴風險最低','可與社區取、平台瘦身排程錯開，開發壓力分散','白名單到期前可用實際數據驗證替代工具是否足夠'],
+  cons:['過渡期系統需同時支援新舊兩套運費規則，開發與測試成本增加','時程拉長約 3～4 個月，行銷工具 PART2 進一步順延','白名單期間購物車仍有兩種運費邏輯，客服說明仍然複雜'],
+  verdict:{t:'hold',h:'方案四的保守版',b:'若營運評估 485 位賣家中有高寄件量的關鍵客戶不能立即調整，採此路徑；否則方案四直接執行，時程與開發成本都更低。'}
+}];
+
+/* ===================== 狀態 ===================== */
+let P = PLANS[3];          // 預設開在建議案
+let SCREEN = 'logi';
+const st = {              // 可互動的模擬狀態
+  usePlatform:true, feeN:35, feeF:99, thrN:'', thrF:'',
+  delivOn:true, delivFlat:200, delivThr:'',
+  mallUseOwn:false, mallFee:50, tiers:[{amt:800,cut:20},{amt:1500,cut:35}],
+  itemInherit:true, itemFee:35, itemAbsorb:false,
+  L:20, W:15, H:10, KG:500, zone:'本島', temp:'常溫',
+  cartShip:'store'
+};
+
+/* ===================== 工具 ===================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function sizeClass(){
+  const sum = (+st.L||0)+(+st.W||0)+(+st.H||0);
+  if(sum<=60) return 's60'; if(sum<=90) return 's90';
+  if(sum<=120) return 's120'; if(sum<=150) return 's150'; return null;
+}
+function storeOK(){
+  const mx = Math.max(+st.L||0,+st.W||0,+st.H||0), sum=(+st.L||0)+(+st.W||0)+(+st.H||0);
+  return mx<=45 && sum<=105 && (+st.KG||0)<=10000;
+}
+function delivFee(){
+  if(P.flags.logiDeliv==='flat') return +st.delivFlat||0;
+  const c = sizeClass(); return c ? DELIV[c][st.zone] : null;
+}
+/** 店到店實收運費（含賣場折抵與賣家吸收） */
+function storeFee(sub){
+  let base;
+  if(P.flags.logiFee==='lock') base = PLATFORM[st.temp];
+  else base = st.temp==='常溫' ? (+st.feeN||0) : (+st.feeF||0);
+  if(P.flags.itemFee==='edit' && !st.itemInherit) base = +st.itemFee||0;
+  if(P.flags.mallFee==='edit' && st.mallUseOwn) base = +st.mallFee||0;
+  let cut=0, why='';
+  if(P.flags.mallFee==='threshold'){
+    const hit = st.tiers.filter(t=>sub>=+t.amt).sort((a,b)=>b.amt-a.amt)[0];
+    if(hit){ cut=Math.min(+hit.cut, base); why=`滿 $${hit.amt} 折抵 $${hit.cut}`; }
+  }else{
+    const thr = st.temp==='常溫' ? +st.thrN : +st.thrF;
+    if(thr>0 && sub>=thr){ cut=base; why=`滿 $${thr} 免運`; }
+  }
+  if(st.itemAbsorb && P.flags.absorb){ cut=base; why='賣家負擔運費'; }
+  return {base, cut, pay:Math.max(0,base-cut), why};
+}
+
+/* ===================== 畫面：金物流設定 ===================== */
+function scrLogi(){
+  const f=P.flags, lock = f.logiFee==='lock';
+  let fee;
+  if(lock){
+    fee = `
+    <div class="notice"><b>平台統一費率</b>　運費金額由平台統一設定，賣家無法修改。您可以選擇是否替買家負擔運費，或到「賣場管理 ＞ 運費折抵設定」設定滿額折抵。</div>
+    <table class="g">
+      <tr><th style="width:34%">物流方式</th><th>平台原價</th><th>當期優惠運費</th><th style="width:22%">開關</th></tr>
+      <tr><td class="l">常溫　店到店</td><td>$${ORIGINAL.常溫}</td><td><span class="pill">$${PLATFORM.常溫}</span></td><td>${swHTML('on_n',true)}</td></tr>
+      <tr><td class="l">冷凍　店到店</td><td>$${ORIGINAL.冷凍}</td><td><span class="pill">$${PLATFORM.冷凍}</span></td><td>${swHTML('on_f',true)}</td></tr>
+      <tr><td class="l">常溫　社區取</td><td>$${ORIGINAL.常溫}</td><td><span class="pill">$${PLATFORM.常溫}</span></td><td>${swHTML('on_c',true)}</td></tr>
+      <tr><td class="l">宅配（依材積計價）</td><td colspan="2">見下方材積價目表</td><td>${swHTML('on_d',st.delivOn,'delivOn')}</td></tr>
+    </table>
+    <p class="hint">※ 每一種物流方式各自獨立一列，賣家只需決定開或不開，不需理解不同物流之間的運費關係。</p>`;
+  }else{
+    fee = `
+    <div class="row"><label class="sw"><input type="checkbox" ${st.usePlatform?'checked':''} data-t="usePlatform"><i class="tr"></i><span class="lbl">開啟［套用平台運費優惠］</span></label></div>
+    <div class="notice">
+      ＊上方按鈕開啟後，買家訂單於優惠期間內自動享運費優惠。<br>
+      ＊優惠期間成立之訂單，平台將依「優惠運費」計算平台與賣家收取的運費金額。<br>
+      <b>＊若開啟「套用平台運費優惠」，且自訂運費低於平台運費優惠金額時，平台將依「自訂運費」作為收取依據。</b>
+      <span style="color:var(--warn)">←（11/19 會議已確認此段文案與系統實際行為不符，決議移除）</span>
+    </div>
+    <table class="g" style="margin-bottom:14px">
+      <tr><th style="width:30%">當期平台運費活動</th><td class="l"><span class="pill free">已適用</span>　優惠期間 2026/11/01–11/30，常溫運費 35 元，冷凍運費 99 元。</td></tr>
+      <tr><th>下期平台運費活動</th><td class="l"><span class="pill free">已適用</span>　優惠期間 2026/12/01–12/31，常溫運費 35 元，冷凍運費 99 元。</td></tr>
+    </table>
+    <h5 style="margin:14px 0 8px;font-size:14px">自訂運費</h5>
+    <div class="row"><label class="lb">常溫</label>
+      <input type="number" value="${st.feeN}" data-n="feeN"><span class="unit">元，免運門檻</span>
+      <input type="number" value="${st.thrN}" data-n="thrN" placeholder="未設定"><span class="unit">元</span></div>
+    <div class="row"><label class="lb">冷凍</label>
+      <input type="number" value="${st.feeF}" data-n="feeF"><span class="unit">元，免運門檻</span>
+      <input type="number" value="${st.thrF}" data-n="thrF" placeholder="未設定"><span class="unit">元</span></div>
+    <p class="hint">※ 現行行為：只要開啟運費變價，一律以 $35 收取，自訂金額不生效。</p>`;
+  }
+
+  let deliv;
+  if(f.logiDeliv==='flat'){
+    deliv = `
+    <div class="notice" style="background:#FFEBEE;color:var(--warn)"><b>⚠ 與既有規則衝突</b>　改為單一固定運費後，離島 s150（原 $355）與本島 s60（原 $80）將同價，價差必須由平台或賣家吸收。好賣+ 與宅配通的成本結構與賣貨便（黑貓議價）不同。</div>
+    <div class="row"><label class="lb">宅配運費</label>
+      <input type="number" value="${st.delivFlat}" data-n="delivFlat"><span class="unit">元（不分材積、不分地區）</span></div>
+    <div class="row"><label class="lb">免運門檻</label>
+      <input type="number" value="${st.delivThr}" data-n="delivThr" placeholder="關閉"><span class="unit">元</span></div>`;
+  }else{
+    deliv = `
+    <div class="notice">
+      1. 宅配訂單總金額（商品總額＋運費總額）不得超過 10,000 元。<br>
+      2. 宅配材積限制：常溫尺寸在 150 公分以下（長＋寬＋高三邊合計），20 公斤以內。<br>
+      3. 如已成功申請藍新信用卡服務並開啟宅配功能，系統將觸發宅配申請流程。
+    </div>
+    <table class="g">
+      <tr><th style="width:34%">材積級距</th><th>本島</th><th>本島偏遠</th><th>離島</th></tr>
+      ${Object.entries(DELIV).map(([k,v])=>`<tr><td class="l">${v.label}</td><td>$${v.本島}</td><td>$${v.本島偏遠}</td><td>$${v.離島}</td></tr>`).join('')}
+    </table>
+    <p class="hint">※ 平台公告價，賣家不可修改。商品的實際材積由「商品編輯 ＞ 材積／重量」決定，系統自動對應級距。</p>`;
+  }
+
+  return `
+  <div class="crumb">賣家專區 ＞ <b>金物流設定</b> ＞ 物流設定</div>
+  <div class="scr-body">
+    <h3 class="scr-title">金物流設定</h3>
+    <p class="scr-sub">${lock?'費率中心：所有物流的運費金額在此統一呈現，賣家只能決定開關':'賣家可於此設定店到店自訂運費與免運門檻'}</p>
+
+    <div class="sect"><h4>店到店 ／ 社區取
+      <span class="tagp ${lock?'t-lock':'t-keep'}">${lock?'金額唯讀（平台價）':'可自訂金額'}</span></h4>
+      <div class="in">${fee}</div></div>
+
+    <div class="sect"><h4>宅配
+      <span class="tagp ${f.logiDeliv==='flat'?'t-del':'t-keep'}">${f.logiDeliv==='flat'?'改為固定運費':'保留 12 格材積價目'}</span></h4>
+      <div class="in">${deliv}</div></div>
+
+    <div class="btnbar"><button class="btn g">取消</button><button class="btn p">儲存變更</button></div>
+  </div>`;
+}
+
+/* ===================== 畫面：賣場設定 ===================== */
+function scrMall(){
+  const f=P.flags;
+  let body;
+  if(f.mallFee==='none'){
+    body = `
+    <div class="sect"><h4>運費設定 <span class="tagp t-del">整區移除</span></h4>
+      <div class="in disabled-zone off" style="min-height:120px">
+        <div class="row"><label class="lb">常溫運費</label><input type="number" value="50" disabled><span class="unit">元</span></div>
+        <div class="row"><label class="lb">免運門檻</label><input type="number" value="800" disabled><span class="unit">元</span></div>
+      </div>
+      <div class="in" style="padding-top:0"><div class="notice">本方案移除賣場層的運費設定。好賣版原本可在此設定各賣場運費的能力將消失，賣家一律吃「金物流設定」的值。</div></div>
+    </div>`;
+  }else if(f.mallFee==='threshold'){
+    body = `
+    <div class="sect"><h4>運費折抵設定 <span class="tagp t-new">新增</span></h4>
+      <div class="in">
+        <div class="notice">本賣場的運費金額一律採平台運費，無法修改。您可以設定「買多少、折多少」，讓買家在本賣場享有運費優惠。折抵上限為平台運費（即免運），差額由您負擔。</div>
+        <table class="g" style="margin-bottom:10px">
+          <tr><th style="width:20%">級距</th><th>消費滿額</th><th>運費折抵</th><th>買家實付運費（常溫 $${PLATFORM.常溫}）</th></tr>
+          ${st.tiers.map((t,i)=>`<tr>
+            <td>第 ${i+1} 級</td>
+            <td>滿 $<input type="number" value="${t.amt}" data-tier="${i}" data-k="amt" style="width:78px"></td>
+            <td>折 $<input type="number" value="${t.cut}" data-tier="${i}" data-k="cut" style="width:70px"></td>
+            <td><b style="color:var(--red)">$${Math.max(0,PLATFORM.常溫-(+t.cut||0))}</b>${(+t.cut||0)>=PLATFORM.常溫?' <span class="pill free">免運</span>':''}</td>
+          </tr>`).join('')}
+          ${st.tiers.length<3?`<tr><td colspan="4" class="l"><button class="btn g" style="padding:5px 14px;font-size:13px" data-act="addtier">＋ 新增級距（最多 3 級）</button></td></tr>`:''}
+        </table>
+        <p class="hint">※ 比照賣貨便：最多 3 個滿額門檻，且折抵後運費只能低於或等於平台運費，不能高於。<br>
+        ※ 這是「行銷條件」而不是「運費設定」——運費來源仍然只有金物流一處，購物車判斷邏輯不變。</p>
+      </div>
+    </div>
+    <div class="sect"><h4>賣場類型 <span class="tagp t-keep">保留</span></h4>
+      <div class="in">
+        <div class="row"><label class="cb"><input type="radio" name="mt" checked> 一般賣場（品牌賣場）</label></div>
+        <div class="row"><label class="cb"><input type="radio" name="mt"> 快速賣場（一頁式）</label></div>
+        <div class="row"><label class="cb"><input type="radio" name="mt"> 單品連結 <span class="tagp t-new">原「商品型網址」正名</span></label></div>
+        ${f.quickForm?`<div class="row"><label class="cb"><input type="radio" name="mt"> 便利自填單 <span class="tagp t-new">新增</span></label></div>`:''}
+        <p class="hint">※ 單品連結即現行 /merchandises/{商品ID}，全平台共 226,411 個、18,699 位賣家使用。本方案<b>不取消</b>這些連結，僅收回其獨立運費設定權，避免 SEO 與站外導流中斷、也避開一般賣場上限 200 的限制。</p>
+      </div>
+    </div>`;
+  }else{
+    body = `
+    <div class="sect"><h4>運費設定 <span class="tagp t-keep">維持好賣版現況</span></h4>
+      <div class="in">
+        <div class="row"><label class="sw"><input type="checkbox" ${st.mallUseOwn?'checked':''} data-t="mallUseOwn"><i class="tr"></i><span class="lbl">本賣場自訂運費（關閉則吃金物流設定）</span></label></div>
+        <div class="disabled-zone ${st.mallUseOwn?'':'off'}">
+          <div class="row"><label class="lb">常溫運費</label><input type="number" value="${st.mallFee}" data-n="mallFee"><span class="unit">元</span></div>
+        </div>
+        <p class="hint">※ 每個賣場可各自設定不同運費。目前實際使用此功能（跨一般賣場設定不同非平台運費）的賣家為 <b>17 位、653 件寄件</b>。</p>
+      </div>
+    </div>`;
+  }
+  const quick = f.quickForm ? `
+    <div class="sect"><h4>便利自填單 <span class="tagp t-new">新增功能</span></h4>
+      <div class="in">
+        <div class="row"><label class="lb">賣場名稱</label><input type="text" value="11月團購" style="width:200px"></div>
+        <div class="row"><label class="lb">運費</label><span class="pill ${f.logiFee==='lock'?'fixed':''}">${f.logiFee==='lock'?`平台運費 $${PLATFORM.常溫}（唯讀）`:`$${st.feeN}`}</span></div>
+        <p class="hint">※ 賣家只需填寫賣場名稱，商品名稱／單價／數量由買家自行填寫後送出，賣家確認後出單。<br>
+        ※ 比照賣貨便：訂單金額（商品總額＋運費）需 ≥ 58 元方能成立。<br>
+        ※ 賣貨便官方目前<b>不提供</b>跨訂單合併，僅能於同一賣場購物車一起結帳；好賣+ 若要做併單屬額外開發。</p>
+      </div>
+    </div>` : '';
+
+  return `
+  <div class="crumb">賣家專區 ＞ 賣場與商品管理 ＞ <b>賣場管理</b> ＞ 編輯賣場</div>
+  <div class="scr-body">
+    <h3 class="scr-title">賣場設定</h3>
+    <p class="scr-sub">${f.mallFee==='threshold'?'賣場層定位為「行銷層」：不設定運費金額，只設定折抵條件':f.mallFee==='none'?'本方案賣場層不再處理運費':'好賣版現況：賣場層可自訂運費'}</p>
+    ${body}${quick}
+    <div class="btnbar"><button class="btn g">取消</button><button class="btn p">儲存變更</button></div>
+  </div>`;
+}
+
+/* ===================== 畫面：商品設定 ===================== */
+function scrItem(){
+  const f=P.flags;
+  const cls=sizeClass(), ok=storeOK(), df=delivFee();
+  const vol = f.itemVol==='none' ? `
+    <div class="sect"><h4>材積 ／ 重量 <span class="tagp t-del">整區移除</span></h4>
+      <div class="in">
+        <div class="notice" style="background:#FFEBEE;color:var(--warn)"><b>⚠ 風險</b>　材積不只用來算宅配運費，還用來判斷「能不能走店到店」（0＜長寬高 ≤45cm、三邊合 ≤105cm、重量 ≤10,000g）。移除後系統無法事先擋下超材商品，將造成大量自動拆單或門市退件。</div>
+      </div></div>` : `
+    <div class="sect"><h4>材積 ／ 重量 <span class="tagp t-keep">必須保留</span></h4>
+      <div class="in">
+        <div class="row">
+          <label class="lb">長</label><input type="number" value="${st.L}" data-n="L"><span class="unit">cm ×</span>
+          <input type="number" value="${st.W}" data-n="W"><span class="unit">cm ×</span>
+          <input type="number" value="${st.H}" data-n="H"><span class="unit">cm</span>
+          <label class="lb" style="min-width:48px">重量</label><input type="number" value="${st.KG}" data-n="KG"><span class="unit">g</span>
+        </div>
+        <table class="g" style="margin-top:10px">
+          <tr><th style="width:26%">判定結果</th><th>三邊合計</th><th>店到店</th><th>宅配級距</th><th>宅配運費（${st.zone}）</th></tr>
+          <tr class="hl"><td>系統自動帶出</td>
+            <td>${(+st.L||0)+(+st.W||0)+(+st.H||0)} cm</td>
+            <td>${ok?'<span class="pill free">可寄送</span>':'<span class="pill" style="background:#FFEBEE;color:var(--warn)">超材，將自動拆單</span>'}</td>
+            <td>${cls?cls:'<span style="color:var(--warn)">超過 150cm</span>'}</td>
+            <td>${df!=null?'$'+df:'—'}</td></tr>
+        </table>
+        <div class="row" style="margin-top:10px"><label class="lb">配送地區</label>
+          ${['本島','本島偏遠','離島'].map(z=>`<label class="cb"><input type="radio" name="zone" ${st.zone===z?'checked':''} data-zone="${z}"> ${z}</label>`).join('&nbsp;&nbsp;')}
+        </div>
+        <p class="hint">※ 店到店限制：0＜長、寬、高 ≤45cm，長＋寬＋高 ≤105cm，重量 ≤10,000g。<br>
+        ※ 宅配限制：長＋寬＋高 ≤150cm，重量 ≤20,000g。<br>
+        <b>※ 這是好賣+ 與賣貨便最大的結構差異——賣貨便宅配固定 200 元不分材積，好賣+ 的宅配是 12 格材積價目（$80～$355），此規則不可拔除。</b></p>
+      </div></div>`;
+
+  let feeBlock;
+  if(f.itemFee==='none'){
+    feeBlock = `<div class="sect"><h4>商品運費設定 <span class="tagp t-del">整區移除</span></h4>
+      <div class="in"><div class="notice">本方案商品層完全不處理運費，一律吃金物流設定。</div></div></div>`;
+  }else if(f.itemFee==='lock'){
+    feeBlock = `<div class="sect"><h4>物流與運費 <span class="tagp t-lock">金額唯讀</span></h4>
+      <div class="in">
+        <table class="g" style="margin-bottom:12px">
+          <tr><th style="width:30%">物流方式</th><th>本商品開放</th><th>運費（平台價）</th><th>我會負擔運費</th></tr>
+          <tr><td class="l">常溫 店到店</td><td>${swHTML('i_n',ok)}</td><td><span class="pill fixed">$${PLATFORM.常溫}</span></td>
+            <td><label class="cb"><input type="checkbox" ${st.itemAbsorb?'checked':''} data-t="itemAbsorb"> 由我負擔</label></td></tr>
+          <tr><td class="l">常溫 社區取</td><td>${swHTML('i_c',ok)}</td><td><span class="pill fixed">$${PLATFORM.常溫}</span></td><td>—</td></tr>
+          <tr><td class="l">宅配</td><td>${swHTML('i_d',cls!=null)}</td><td><span class="pill fixed">${df!=null?'$'+df:'超材'}</span><br><span class="unit" style="font-size:11px">依本商品材積 ${cls||'—'} 自動帶出</span></td><td>—</td></tr>
+        </table>
+        <p class="hint">※ 商品層只決定「這個商品開放哪些物流」與「要不要替買家負擔運費」，不再設定金額。<br>
+        ※ 超材商品的店到店開關會自動鎖住，從源頭避免拆單與退件。</p>
+      </div></div>`;
+  }else{
+    feeBlock = `<div class="sect"><h4>商品運費設定 <span class="tagp t-keep">維持現況（可自訂）</span></h4>
+      <div class="in">
+        <div class="row"><label class="sw"><input type="checkbox" ${st.itemInherit?'checked':''} data-t="itemInherit"><i class="tr"></i><span class="lbl">套用賣家資訊運費（關閉後可自訂本商品運費）</span></label></div>
+        <div class="disabled-zone ${st.itemInherit?'off':''}" style="margin-top:6px">
+          <div class="row"><label class="lb">店到店 常溫</label><input type="number" value="${st.itemFee}" data-n="itemFee"><span class="unit">元</span>
+            <label class="cb" style="margin-left:10px"><input type="checkbox" ${st.itemAbsorb?'checked':''} data-t="itemAbsorb"> 我會負擔運費</label></div>
+          <div class="row"><label class="lb">宅配</label><span class="pill">${df!=null?'$'+df:'超材'}（材積 ${cls||'—'}）</span></div>
+        </div>
+        <div class="notice" style="margin-top:12px;background:#FFEBEE;color:var(--warn)">
+          <b>⚠ 核心問題未解</b>　商品層仍可自訂運費，因此同一賣場若有多件商品運費不同，購物車仍需在多組金額中擇一，無法合理向賣家說明。<br>
+          實際使用此情境的賣家僅 <b>23 位、918 件</b>（好賣版 0.13%），其中前 10 位就佔 93.68%。
+        </div>
+      </div></div>`;
+  }
+
+  return `
+  <div class="crumb">賣家專區 ＞ 賣場與商品管理 ＞ 商品管理 ＞ <b>編輯商品</b> ＞ 進階設定</div>
+  <div class="scr-body">
+    <h3 class="scr-title">商品設定</h3>
+    <p class="scr-sub">${f.itemFee==='lock'?'商品層定位為「物理屬性層」：材積、物流開關、是否吸收運費':'商品層目前同時負責材積與運費金額'}</p>
+    ${vol}${feeBlock}
+    <div class="btnbar"><button class="btn g">取消</button><button class="btn p">儲存並上架</button></div>
+  </div>`;
+}
+
+/* ===================== 畫面：買家購物車 ===================== */
+function scrCart(){
+  const items=[{n:'手工餅乾禮盒',p:420,q:1},{n:'果乾綜合包',p:380,q:1}];
+  const sub=items.reduce((a,b)=>a+b.p*b.q,0);
+  const s=storeFee(sub), df=delivFee();
+  const ship = st.cartShip==='store' ? s.pay : (df||0);
+  return `
+  <div class="crumb">好賣市集 ＞ <b>購物車</b> ＞ 付款結帳</div>
+  <div class="scr-body">
+    <h3 class="scr-title">買家購物車</h3>
+    <p class="scr-sub">看同一個方案下，買家最後實際看到的運費是怎麼算出來的</p>
+
+    <div class="sect"><h4>訂單內容</h4><div class="in">
+      <table class="g"><tr><th class="l" style="width:46%">商品</th><th>單價</th><th>數量</th><th>合計</th></tr>
+      ${items.map(i=>`<tr><td class="l">${i.n}<br><span class="unit" style="font-size:11px">店到店・宅配</span></td><td>$${i.p}</td><td>${i.q}</td><td>$${i.p*i.q}</td></tr>`).join('')}
+      </table></div></div>
+
+    <div class="sect"><h4>配送方式</h4><div class="in">
+      <div class="opt ${st.cartShip==='store'?'sel':''}" data-ship="store">
+        <div><div class="nm">店到店（常溫）</div><div class="sb">${s.why?esc(s.why):'無折抵'}</div></div>
+        <div class="pr">${s.pay===0?'<span class="pill free">免運</span>':'$'+s.pay}${s.cut>0&&s.pay>0?` <span class="unit" style="text-decoration:line-through;font-size:12px">$${s.base}</span>`:''}</div>
+      </div>
+      <div class="opt ${st.cartShip==='deliv'?'sel':''}" data-ship="deliv">
+        <div><div class="nm">宅配</div><div class="sb">${P.flags.logiDeliv==='flat'?'單一固定運費':`材積 ${sizeClass()||'超材'}・${st.zone}`}</div></div>
+        <div class="pr">${df!=null?'$'+df:'不可配送'}</div>
+      </div>
+      <p class="hint"><b>本方案的購物車規則：</b>${esc(P.flags.cartRule)}</p>
+    </div></div>
+
+    <div class="sect"><h4>金額試算</h4><div class="in">
+      <div class="cart-line"><span>商品總額（共 ${items.length} 項）</span><span>$${sub}</span></div>
+      <div class="cart-line"><span>運費總額</span><span class="mo">$${ship}</span></div>
+      ${s.cut>0&&st.cartShip==='store'?`<div class="cart-line"><span>運費折抵</span><span style="color:var(--green)">－$${s.cut}</span></div>`:''}
+      <div class="cart-line tot"><span>訂單總額</span><span class="mo">$${sub+ship}</span></div>
+      <p class="hint" style="margin-top:12px">※ 試算金額會隨您在「金物流設定／賣場設定／商品設定」頁面的調整即時變動，可用來向營運演示每個方案的實際結果。</p>
+    </div></div>
+  </div>`;
+}
+
+function swHTML(id,on,bind){
+  return `<label class="sw"><input type="checkbox" ${on?'checked':''} ${bind?`data-t="${bind}"`:'disabled'}><i class="tr"></i></label>`;
+}
+
+/* ===================== 側欄 ===================== */
+function side(){
+  const v=P.verdict;
+  return `
+  <div class="card"><h3>這個方案的規格</h3><ul>${P.specs.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+  <div class="card"><h3>三層的處理方式</h3>
+    <div class="kv"><span>金物流設定</span><b>${P.flags.logiFee==='lock'?'費率中心（唯讀）':'可自訂金額'}</b></div>
+    <div class="kv"><span>　└ 宅配</span><b>${P.flags.logiDeliv==='flat'?'單一固定運費':'12 格材積價目'}</b></div>
+    <div class="kv"><span>賣場設定</span><b>${({none:'移除運費區',threshold:'只設滿額折抵',edit:'可自訂運費'})[P.flags.mallFee]}</b></div>
+    <div class="kv"><span>商品設定</span><b>${({none:'移除運費區',lock:'開關＋吸收',edit:'可自訂運費'})[P.flags.itemFee]}</b></div>
+    <div class="kv"><span>　└ 材積</span><b>${P.flags.itemVol==='none'?'移除（高風險）':'保留'}</b></div>
+    <div class="kv"><span>商品型網址</span><b>${({keep:'原樣保留',rename:'正名為單品連結',drop:'取消，需搬移'})[P.flags.itemUrl]}</b></div>
+    <div class="kv"><span>便利自填單</span><b>${P.flags.quickForm?'提供':'不提供'}</b></div>
+  </div>
+  <div class="card"><h3>優點</h3><ul>${P.pros.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+  <div class="card"><h3>風險與代價</h3><ul>${P.cons.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+  <div class="card"><h3>評估結論</h3><div class="verdict ${v.t}"><b>${v.h}</b>${v.b}</div>
+    <div class="legend"><span>🟩 建議</span><span>🟨 條件可行</span><span>🟥 不建議</span></div></div>`;
+}
+
+/* ===================== 渲染 ===================== */
+function render(){
+  $('#plans').innerHTML = PLANS.map(p=>
+    `<div class="plan-tab ${p.id===P.id?'on':''} ${p.rec?'rec':''}" data-p="${p.id}">${p.tab}<span class="n">${p.tabn}</span></div>`).join('');
+  $('#p-name').textContent = P.name;
+  $('#p-desc').textContent = P.desc;
+  $('#p-stats').innerHTML = P.stats.map(s=>
+    `<div class="stat ${s.c||''}"><span class="k">${s.k}</span><span class="v">${s.v}</span><span class="s">${s.s}</span></div>`).join('');
+  $('#screen').innerHTML = ({logi:scrLogi,mall:scrMall,item:scrItem,cart:scrCart})[SCREEN]();
+  $('#side').innerHTML = side();
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.s===SCREEN));
+}
+
+document.addEventListener('click', e=>{
+  const pt=e.target.closest('.plan-tab');
+  if(pt){ P = PLANS.find(x=>x.id===pt.dataset.p); render(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  const nb=e.target.closest('#nav button');
+  if(nb){ SCREEN=nb.dataset.s; render(); return; }
+  const op=e.target.closest('.opt');
+  if(op){ st.cartShip=op.dataset.ship; render(); return; }
+  if(e.target.dataset.act==='addtier'){ if(st.tiers.length<3){st.tiers.push({amt:2000,cut:35}); render();} return; }
+});
+document.addEventListener('change', e=>{
+  const t=e.target;
+  if(t.dataset.t){ st[t.dataset.t]=t.checked; render(); return; }
+  if(t.dataset.zone){ st.zone=t.dataset.zone; render(); return; }
+});
+document.addEventListener('input', e=>{
+  const t=e.target;
+  if(t.dataset.n){ st[t.dataset.n]=t.value; render(); setTimeout(()=>{const el=document.querySelector(`[data-n="${t.dataset.n}"]`); if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);} },0); return; }
+  if(t.dataset.tier!==undefined){ st.tiers[+t.dataset.tier][t.dataset.k]=t.value; render(); return; }
+});
+render();
+</script>
+</body>
+</html>
